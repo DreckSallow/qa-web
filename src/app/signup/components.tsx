@@ -2,6 +2,8 @@
 import { InputFieldsStr, UseFormArgs, useFormSubmit } from "@/hooks/";
 import { InputForm } from "../components/forms";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 const formConfig: UseFormArgs = {
 	username: {
 		required: true,
@@ -29,11 +31,12 @@ const formConfig: UseFormArgs = {
 	},
 };
 export const RegisterForm = () => {
+	const [formErr, setFormErr] = useState<string | null>(null);
+	const router = useRouter();
 	const supabase = createClientComponentClient();
 	const { errors, handleInput, handleSubmit } = useFormSubmit(formConfig);
 	const onSubmit = async (values: InputFieldsStr) => {
-		console.log("singup");
-		await supabase.auth.signUp({
+		const { error } = await supabase.auth.signUp({
 			email: values["email"] as string,
 			password: values["password"] as string,
 			options: {
@@ -43,6 +46,10 @@ export const RegisterForm = () => {
 				},
 			},
 		});
+		if (error) {
+			return setFormErr(error.message);
+		}
+		router.push("/verify-email");
 	};
 
 	return (
@@ -78,6 +85,9 @@ export const RegisterForm = () => {
 			>
 				Sign In
 			</button>
+			{formErr && (
+				<p className="mt-6 text-red-400 font-semibold text-center">{formErr}</p>
+			)}{" "}
 		</form>
 	);
 };
