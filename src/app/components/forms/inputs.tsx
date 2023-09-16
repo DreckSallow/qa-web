@@ -24,7 +24,9 @@ export const InputForm = (props: InputProps) => {
 				onInput={props.onInput}
 				placeholder={props.placeholder}
 				id={props.id}
-				className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+				className={`shadow appearance-none border rounded w-full p-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-4 ring-blue-300 ${
+					props.errorMessage ? "mb-2 border-red-500" : ""
+				}`}
 				type={props.type ?? "text"}
 			/>
 			<p className="text-red-500 text-xs italic">{props.errorMessage}</p>
