@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { GoogleAuthButton } from "../components/forms/buttons";
 import { RegisterForm } from "./components";
 
+export const dynamic = "force-dynamic";
 export default async function RegisterPage() {
 	const supabase = createServerComponentClient({ cookies });
 	const {
