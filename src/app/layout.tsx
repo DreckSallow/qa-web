@@ -17,23 +17,7 @@ export default function RootLayout({
 }) {
 	return (
 		<html lang="en">
-			<body className={inter.className}>
-				{children}
-				<footer className="w-full min-h-20 py-10 px-4  flex flex-col justify-center">
-					<section className="flex flex-row justify-around">
-						<h2 className="text-purple-600 font-semibold text-xl">Ask</h2>
-						<a href="https://github.com/DreckSallow/qa-web">
-							<GithubIcon className="h-8 w-8 fill-gray-700" />
-						</a>
-						<a href="https://github.com/DreckSallow/qa-web" target="_blank">
-							<LinkedinIcon className="h-8 w-8 fill-gray-700" />
-						</a>{" "}
-					</section>
-					<span className="text-sm text-center mt-8">
-						&copy; 2023 Dreck Sallow. All Rights Reserved
-					</span>
-				</footer>
-			</body>
+			<body className={inter.className}>{children}</body>
 		</html>
 	);
 }
