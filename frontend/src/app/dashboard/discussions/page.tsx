@@ -20,7 +20,6 @@ export default function DiscussionsPage() {
 			.from("discussions")
 			.select("id,title")
 			.then((res) => {
-				console.log(res);
 				if (res.error) {
 					return console.log("ERROR: ", res.error);
 				}
