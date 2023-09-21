@@ -94,6 +94,8 @@ dependencies = [
  "dotenv",
  "futures",
  "postgrest",
+ "serde",
+ "serde_json",
  "tokio",
  "tracing",
  "tracing-subscriber",
