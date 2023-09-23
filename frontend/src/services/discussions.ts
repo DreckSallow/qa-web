@@ -10,12 +10,19 @@ export const getDiscussions = (
 		.eq("id", id);
 };
 
-export const getCommentsLikes = () => {
+export const getCommentsLikes = (disId: string) => {
 	const ids = localStorage.getItem("comments");
-	if (ids) return JSON.parse(ids) as string[];
+	if (ids) return JSON.parse(ids)[disId] as string[];
 	return [];
 };
 
-export const saveCommentsLikes = (ids: string[]) => {
-	localStorage.setItem("comments", JSON.stringify(ids));
+export const saveCommentsLikes = (disId: string, ids: string[]) => {
+	const discussions = localStorage.getItem("comments");
+	if (discussions) {
+		const parsed = JSON.parse(discussions);
+		parsed[disId] = ids;
+		localStorage.setItem("comments", JSON.stringify(parsed));
+	} else {
+		localStorage.setItem("comments", JSON.stringify({ [disId]: ids }));
+	}
 };
