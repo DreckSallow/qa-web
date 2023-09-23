@@ -8,6 +8,7 @@ export interface CommentInfo {
 	message: string;
 	id: string;
 	likes: number;
+	isLiked?: boolean;
 }
 
 export interface DiscussionComplete extends DiscussionInfo {
