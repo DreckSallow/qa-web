@@ -3,6 +3,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import Sidebar from "./sidebar";
 
+export const dynamic = "force-dynamic";
+
 export default async function DashboardPage({
 	children,
 }: {
@@ -18,9 +20,11 @@ export default async function DashboardPage({
 	}
 
 	return (
-		<main className="min-h-screen w-full grid grid-cols-12 divide-x-2 divide-slate-300">
+		<main className="min-h-screen w-full flex flex-row divide-x-2 divide-slate-300">
 			<Sidebar />
-			<section className="col-start-3 col-end-13">{children}</section>
+			<section className="flex-1 max-h-screen overflow-scroll">
+				{children}
+			</section>
 		</main>
 	);
 }

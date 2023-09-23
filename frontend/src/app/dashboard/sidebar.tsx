@@ -7,7 +7,7 @@ export default function Sidebar() {
 	const router = useRouter();
 	const pathName = usePathname();
 	return (
-		<section className="col-span-2 p-4 flex flex-col justify-between">
+		<section className="w-[180px] p-4 flex flex-col justify-between">
 			<div>
 				<a href="/" className="text-xl font-semibold text-purple-600">
 					ASK
