@@ -7,6 +7,10 @@
   .card {
     @apply rounded-md p-4 border;
   }
+
+  .button {
+    @apply rounded-md py-1 px-2;
+  }
 }
 
 :root {}
