@@ -6,6 +6,7 @@ import { useSupabase } from "../context";
 import { useSyncForm, useModal, InputFieldsStr } from "@/hooks";
 import { ModalDialog } from "@/app/components/modals";
 import { PencilIcon, XIcon } from "@heroicons/react/outline";
+import { RequestState } from "@/interfaces";
 
 interface Discussion {
 	id: string;
@@ -27,6 +28,10 @@ export default function DiscussionsPage() {
 	const router = useRouter();
 	const { session, supabase } = useSupabase();
 	const { ref, openModal, closeModal } = useModal();
+	const [requestState, setRequestState] = useState<RequestState>({
+		error: null,
+		isLoading: true,
+	});
 	const [formStatus, setFormStatus] = useState<
 		"create" | { type: "edit"; id: string }
 	>("create");
@@ -38,11 +43,15 @@ export default function DiscussionsPage() {
 			.from("discussions")
 			.select("id,title,description")
 			.eq("user_id", session.user.id)
-			.then((res) => {
-				if (res.error) {
-					return console.log("ERROR: ", res.error);
+			.then(({ data, error }) => {
+				if (error) {
+					return setRequestState({
+						error,
+						isLoading: false,
+					});
 				}
-				setDiscussions(res.data);
+				setDiscussions(data);
+				setRequestState({ error: null, isLoading: false });
 			});
 	}, []);
 
@@ -89,7 +98,7 @@ export default function DiscussionsPage() {
 			.from("discussions")
 			.delete()
 			.eq("id", dId)
-			.then(({ data, error }) => {
+			.then(({ error }) => {
 				if (error) {
 					return;
 				}
@@ -117,22 +126,28 @@ export default function DiscussionsPage() {
 					</button>
 				</div>
 			</header>
-			<DiscussSection
-				discussions={discussions}
-				onSelect={(id) => router.push(`/dashboard/discussions/${id}`)}
-				onRemove={handleRemove}
-				onEdit={(dId) => {
-					const finded = discussions.find(({ id }) => id === dId);
-					if (finded) {
-						setValues({
-							title: finded.title,
-							description: finded.description,
-						});
-						setFormStatus({ type: "edit", id: dId });
-						openModal();
-					}
-				}}
-			/>
+			{requestState.isLoading && (
+				<p className="mt-4 text-xl text-slate-600 font-medium">Loading...</p>
+			)}
+			{!requestState.isLoading && !requestState.error && (
+				<DiscussSection
+					discussions={discussions}
+					onSelect={(id) => router.push(`/dashboard/discussions/${id}`)}
+					onRemove={handleRemove}
+					onEdit={(dId) => {
+						const finded = discussions.find(({ id }) => id === dId);
+						if (finded) {
+							setValues({
+								title: finded.title,
+								description: finded.description,
+							});
+							setFormStatus({ type: "edit", id: dId });
+							openModal();
+						}
+					}}
+				/>
+			)}
+
 			<ModalDialog
 				className="backdrop:bg-black/50"
 				onClose={closeModal}

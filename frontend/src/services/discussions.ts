@@ -12,7 +12,10 @@ export const getDiscussions = (
 
 export const getCommentsLikes = (disId: string) => {
 	const ids = localStorage.getItem("comments");
-	if (ids) return JSON.parse(ids)[disId] as string[];
+	if (ids) {
+		const data = JSON.parse(ids)[disId];
+		if (Array.isArray(data)) return data;
+	}
 	return [];
 };
 

@@ -1,3 +1,5 @@
+import { PostgrestError } from "@supabase/supabase-js";
+
 export interface DiscussionInfo {
 	id: string;
 	title: string;
@@ -13,4 +15,9 @@ export interface CommentInfo {
 
 export interface DiscussionComplete extends DiscussionInfo {
 	comments: CommentInfo[];
+}
+
+export interface RequestState {
+	error: PostgrestError | null;
+	isLoading: boolean;
 }

@@ -29,6 +29,7 @@ export const DiscussionsList = ({
 			};
 		});
 	}
+
 	useEffect(() => {
 		if (!data) return;
 		const socket = new WebSocket(`ws://localhost:3001/thread/${discussion_id}`);
@@ -43,32 +44,28 @@ export const DiscussionsList = ({
 					comments.filter(({ id }) => id !== payload.id),
 				);
 			} else if (type === "Update") {
-				return setComments((comments) =>
-					comments.map((cm) =>
+				return setComments((comments) => {
+					const newComments = comments.map((cm) =>
 						cm.id === payload.id ? { ...payload, isLiked: !cm.isLiked } : cm,
-					),
-				);
+					);
+					saveCommentsLikes(
+						discussion_id,
+						newComments.filter(({ isLiked }) => isLiked).map(({ id }) => id),
+					);
+					return newComments;
+				});
 			}
 		});
 		socket.addEventListener("error", (e) => {
 			console.log("SOCKET ERROR: ", e);
 		});
 		socket.addEventListener("close", (c) => {
-			console.log("SOCKET CLOSED: ", c);
+			// console.log("SOCKET CLOSED: ", c);
 		});
 		setWebSocket(socket);
-		return () => {
+		return function () {
 			// cleanup the data
 			socket.close();
-			setData((d) => {
-				if (d) {
-					saveCommentsLikes(
-						discussion_id,
-						d.comments.filter(({ isLiked }) => isLiked).map(({ id }) => id),
-					);
-				}
-				return null;
-			});
 		};
 	}, [request]);
 
