@@ -107,7 +107,10 @@ export const DiscussionsList = ({
 	};
 	return (
 		<>
-			{data && (
+			{request.isLoading && (
+				<p className="mt-6 text-slate-600 text-xl font-medium">Loading...</p>
+			)}
+			{!request.isLoading && data && (
 				<>
 					<Header discussion={data.discussion} />
 					<section className="">
