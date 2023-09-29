@@ -3,6 +3,16 @@
 @tailwind utilities;
 
 
+@layer utilities {
+  .floate {
+    animation-name: floating;
+    animation-direction: alternate;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease;
+  }
+}
+
+
 @layer components {
   .card {
     @apply rounded-md p-4 border;
@@ -11,9 +21,33 @@
   .button {
     @apply rounded-md py-1 px-2;
   }
+
+  .link {
+    @apply underline hover:no-underline underline-offset-2;
+  }
 }
 
-:root {}
+@keyframes floating {
+  0% {
+    transform: translateY(0)
+  }
+
+  30% {
+    transform: translateY(-10px)
+  }
+
+  50% {
+    transform: translateY(4px)
+  }
+
+  70% {
+    transform: translateY(-15px)
+  }
+
+  to {
+    transform: translateY(0)
+  }
+}
 
 @media (prefers-color-scheme: dark) {
   :root {}
