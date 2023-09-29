@@ -216,42 +216,46 @@ const DiscussSection = ({
 }: DiscussProps) => {
 	return (
 		<section className="mt-4 flex flex-row gap-8 flex-wrap">
-			{discussions.map((d, i) => {
-				return (
-					<Card
-						className="max-w-xs hover:cursor-pointer hover:-translate-y-1 transform transition duration-900 relative"
-						key={i}
-						onClick={() => {
-							onSelect(d.id);
-						}}
-					>
-						<h2 className="text-lg font-semibold mb-2 text-slate-700">
-							{d.title}
-						</h2>
-						<p className="mt-2 text-slate-600">{d.description}</p>
-						<div className="flex flex-col gap-4 absolute top-[-10px] right-[-10px]">
-							<button
-								className="rounded-full p-1.5 bg-red-400"
-								onClick={(ev) => {
-									ev.stopPropagation();
-									onRemove(d.id);
-								}}
-							>
-								<XIcon className="h-3.5 w-3.5 stroke-white" />
-							</button>
-							<button
-								className="rounded-full p-1.5 bg-blue-400"
-								onClick={(ev) => {
-									ev.stopPropagation();
-									onEdit(d.id);
-								}}
-							>
-								<PencilIcon className="h-3.5 w-3.5 stroke-white" />
-							</button>
-						</div>
-					</Card>
-				);
-			})}
+			{discussions.length === 0 ? (
+				<p className="mt-6 text-lg text-slate-700">You don't have any discussions created yet.</p>
+			) : (
+				discussions.map((d, i) => {
+					return (
+						<Card
+							className="max-w-xs hover:cursor-pointer hover:-translate-y-1 transform transition duration-900 relative"
+							key={i}
+							onClick={() => {
+								onSelect(d.id);
+							}}
+						>
+							<h2 className="text-lg font-semibold mb-2 text-slate-700">
+								{d.title}
+							</h2>
+							<p className="mt-2 text-slate-600">{d.description}</p>
+							<div className="flex flex-col gap-4 absolute top-[-10px] right-[-10px]">
+								<button
+									className="rounded-full p-1.5 bg-red-400"
+									onClick={(ev) => {
+										ev.stopPropagation();
+										onRemove(d.id);
+									}}
+								>
+									<XIcon className="h-3.5 w-3.5 stroke-white" />
+								</button>
+								<button
+									className="rounded-full p-1.5 bg-blue-400"
+									onClick={(ev) => {
+										ev.stopPropagation();
+										onEdit(d.id);
+									}}
+								>
+									<PencilIcon className="h-3.5 w-3.5 stroke-white" />
+								</button>
+							</div>
+						</Card>
+					);
+				})
+			)}
 		</section>
 	);
 };
