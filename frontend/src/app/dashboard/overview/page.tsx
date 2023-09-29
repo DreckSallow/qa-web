@@ -36,7 +36,8 @@ export default function OverviewPage() {
 	useEffect(() => {
 		supabase
 			.from("discussions")
-			.select("id,title,description, comments (id,likes)")
+			.select("id,title,description,user_id, comments (id,likes)")
+			.eq("user_id", session.user.id)
 			.then(({ data, error }) => {
 				if (error) {
 					return setRequestState({
@@ -167,10 +168,7 @@ const CardInfo = ({ title, content, className }: CardProps) => {
 function getRandomColors(n: number): string[] {
 	const colors = [
 		"slate",
-		"gray",
 		"zinc",
-		"neutral",
-		"stone",
 		"red",
 		"orange",
 		"amber",
