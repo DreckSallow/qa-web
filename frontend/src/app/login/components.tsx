@@ -18,7 +18,7 @@ const formConfig: UseFormArgs = {
 	},
 	email: {
 		required: true,
-		requiredMessage: "EMAIL REQUIRED",
+		requiredMessage: "The email is required.",
 		checker(val) {
 			const emailRegex = /^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/;
 			if (!emailRegex.test(val as string)) {
@@ -34,7 +34,7 @@ export const LoginForm = () => {
 	const { errors, handleInput, handleSubmit } = useFormSubmit(formConfig);
 
 	const onSubmit = async (values: InputFieldsStr) => {
-		const { data, error } = await supabase.auth.signInWithPassword({
+		const { error } = await supabase.auth.signInWithPassword({
 			email: values["email"] as string,
 			password: values["password"] as string,
 		});

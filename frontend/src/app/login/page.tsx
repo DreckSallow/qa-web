@@ -15,12 +15,12 @@ export default async function LoginPage() {
 
 	return (
 		<main className="w-full">
-			<header className="flex items-center justify-start px-4 h-[70px]">
+			<header className="fixed flex items-center justify-start px-4 h-[70px]">
 				<a href="/" className="text-xl text-purple-500 font-semibold">
 					ASK
 				</a>
 			</header>
-			<section className="h-screen flex flex-col justify-center items-center mt-[-70px]">
+			<section className="h-screen flex flex-col justify-center items-center pt-[70px]">
 				<h1 className="px-4 text-2xl text-center text-gray-700">Login</h1>
 				<div className="p-4">
 					<div>

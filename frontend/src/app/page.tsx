@@ -218,8 +218,9 @@ const PhoneMessage = ({
 			<p className="text-sm p-1">
 				{text}
 				<ThumbUpIcon
-					className={`h-5 w-5 mt-2 cursor-pointer ${isLiked ? "stroke-blue-400" : "stroke-gray-400"
-						}`}
+					className={`h-5 w-5 mt-2 cursor-pointer ${
+						isLiked ? "stroke-blue-400" : "stroke-gray-400"
+					}`}
 				/>
 			</p>
 		</div>

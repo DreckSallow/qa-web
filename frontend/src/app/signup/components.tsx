@@ -21,7 +21,7 @@ const formConfig: UseFormArgs = {
 	},
 	email: {
 		required: true,
-		requiredMessage: "EMAIL REQUIRED",
+		requiredMessage: "The email is required.",
 		checker(val) {
 			const emailRegex = /^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/;
 			if (!emailRegex.test(val as string)) {
@@ -83,7 +83,7 @@ export const RegisterForm = () => {
 				className="bg-purple-500  text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full mt-2 ring-purple-300 focus:ring-4"
 				type="submit"
 			>
-				Sign In
+				Sign up
 			</button>
 			{formErr && (
 				<p className="mt-6 text-red-400 font-semibold text-center">{formErr}</p>
