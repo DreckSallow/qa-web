@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { ThumbUpIcon } from "@heroicons/react/outline";
 import { GithubIcon } from "./components/icons";
+import { ToggleButtonAuth } from "./components/buttons";
 
 export default function Landing() {
 	return (
@@ -91,8 +92,8 @@ export default function Landing() {
 			</section>
 			<footer className="w-full min-h-20 py-10 px-4  flex flex-col justify-center">
 				<section className="flex flex-row justify-around">
-					<a href="/" className="text-purple-600 font-semibold text-xl">
-						Quipp
+					<a href="/">
+						<Image src="/logo-text.svg" width={150} height={60} alt="logo" />
 					</a>
 					<a
 						href="https://github.com/DreckSallow/qa-web"
@@ -157,13 +158,10 @@ const HeaderNav = () => {
 	return (
 		<header className="fixed flex top-0 w-full h-[80px] justify-center px-4 z-10 backdrop-blur-sm">
 			<nav className="flex flex-row justify-between items-center w-full">
-				<div>Quipp</div>
-				<a
-					href="/login"
-					className="rounded-full bg-purple-500 text-white py-2 px-3 text-sm font-semibold"
-				>
-					Login
+				<a href="/">
+					<Image src="/logo-text.svg" width={150} height={60} alt="logo" />
 				</a>
+				<ToggleButtonAuth />
 			</nav>
 		</header>
 	);
@@ -218,9 +216,8 @@ const PhoneMessage = ({
 			<p className="text-sm p-1">
 				{text}
 				<ThumbUpIcon
-					className={`h-5 w-5 mt-2 cursor-pointer ${
-						isLiked ? "stroke-blue-400" : "stroke-gray-400"
-					}`}
+					className={`h-5 w-5 mt-2 cursor-pointer ${isLiked ? "stroke-blue-400" : "stroke-gray-400"
+						}`}
 				/>
 			</p>
 		</div>

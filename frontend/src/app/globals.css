@@ -10,6 +10,12 @@
     animation-iteration-count: infinite;
     animation-timing-function: ease;
   }
+
+  .fixed-h {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+  }
 }
 
 
