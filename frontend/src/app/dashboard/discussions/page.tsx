@@ -107,13 +107,13 @@ export default function DiscussionsPage() {
 	};
 
 	return (
-		<main className="p-6">
-			<header className="border-b-2 border-gray-200 flex flex-row items-end pb-8">
+		<main className="py-6 px-4 lg:px-6">
+			<header className="border-b-2 border-gray-200 flex flex-col items-start pb-8 gap-4 lg:flex-row lg:gap-8">
 				<div>
 					<h1 className="text-4xl font-semibold text-slate-800">Discussions</h1>
 					<p className="mt-4 text-slate-600">See your open discussions</p>
 				</div>
-				<div className="ml-10">
+				<div className="">
 					<button
 						onClick={() => {
 							setValues({ title: "", description: "" });
@@ -190,7 +190,7 @@ export default function DiscussionsPage() {
 					<div className="w-full mt-4 flex justify-end">
 						<button
 							type="submit"
-							className="button text-white text-sm bg-purple-400"
+							className="button text-white text-sm bg-purple-600"
 						>
 							Create
 						</button>
@@ -217,7 +217,9 @@ const DiscussSection = ({
 	return (
 		<section className="mt-4 flex flex-row gap-8 flex-wrap">
 			{discussions.length === 0 ? (
-				<p className="mt-6 text-lg text-slate-700">You don't have any discussions created yet.</p>
+				<p className="mt-6 text-lg text-slate-700">
+					You don't have any discussions created yet.
+				</p>
 			) : (
 				discussions.map((d, i) => {
 					return (

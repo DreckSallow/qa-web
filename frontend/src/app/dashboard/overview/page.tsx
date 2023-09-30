@@ -79,7 +79,7 @@ export default function OverviewPage() {
 					Hello {session.user.user_metadata["full_name"]} welcome back!
 				</h3>
 			</header>
-			<section className="my-6 mx-8">
+			<section className="my-6 mx-2 lg:mx-8">
 				<h2 className="text-2xl font-semibold mb-4 text-slate-700">
 					Discussions
 				</h2>
@@ -102,8 +102,8 @@ interface InfoDataProps {
 const InfoData = ({ discussions, comments }: InfoDataProps) => {
 	return (
 		<>
-			<section className="flex flex-row gap-4 mb-4 items-center h-[300px]">
-				<div className="h-full flex flex-col gap-4 w-[300px] max-w-[300px]">
+			<section className="flex flex-col gap-4 mb-4 items-center lg:flex-row lg:h-[300px]">
+				<div className="h-full w-full flex flex-row gap-4 lg:flex-col lg:max-w-[400px]">
 					<CardInfo
 						title="Total"
 						content={discussions.total ?? 0}
@@ -115,10 +115,10 @@ const InfoData = ({ discussions, comments }: InfoDataProps) => {
 						className="flex-1"
 					/>
 				</div>
-				<Card className="h-full flex flex-col flex-1">
+				<Card className="w-full lg:h-full">
 					<Title className="">Comments by discussion</Title>
 					<DonutChart
-						className="flex-1 flex justify-center items-center"
+						className="flex flex-col justify-around"
 						data={discussions.analytics ?? []}
 						index={"name"}
 						category="value"
@@ -127,16 +127,16 @@ const InfoData = ({ discussions, comments }: InfoDataProps) => {
 				</Card>
 			</section>
 			<h2 className="text-xl font-semibold text-slate-700 mt-8">Comments</h2>
-			<section className="mt-4 flex flex-row gap-4 h-[300px]">
+			<section className="mt-4 flex flex-col gap-4 lg:flex-row lg:h-[300px]">
 				<CardInfo
 					title="Total"
 					content={comments.total ?? 0}
-					className="w-[250px]"
+					className="w-full lg:max-w-[400px] lg:h-full"
 				/>
-				<Card className="h-full flex flex-col">
+				<Card className="h-full flex flex-col min-h-[250px]">
 					<Title>Likes by discussion</Title>
 					<DonutChart
-						className="flex-1 flex justify-center items-center"
+						className="flex flex-col justify-around"
 						data={comments.analytics ?? []}
 						index="name"
 						category="value"
