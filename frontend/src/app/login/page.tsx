@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -10,14 +11,14 @@ export default async function LoginPage() {
 		data: { session },
 	} = await supabase.auth.getSession();
 	if (session !== null) {
-		redirect("/dashboard");
+		redirect("/dashboard/overview");
 	}
 
 	return (
 		<main className="w-full">
 			<header className="fixed flex items-center justify-start px-4 h-[70px]">
-				<a href="/" className="text-xl text-purple-500 font-semibold">
-					ASK
+				<a href="/">
+					<Image src="/logo-text.svg" width={150} height={60} alt="logo" />
 				</a>
 			</header>
 			<section className="h-screen flex flex-col justify-center items-center pt-[70px]">

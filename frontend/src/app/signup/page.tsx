@@ -1,4 +1,5 @@
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import Image from "next/image";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { GoogleAuthButton } from "../components/forms/buttons";
@@ -11,13 +12,13 @@ export default async function RegisterPage() {
 		data: { session },
 	} = await supabase.auth.getSession();
 	if (session !== null) {
-		redirect("/dashboard");
+		redirect("/dashboard/overview");
 	}
 	return (
 		<main className="w-full">
 			<header className="fixed flex items-center justify-start px-4 h-[70px]">
-				<a href="/" className="text-xl text-purple-500 font-semibold">
-					Quipp
+				<a href="/">
+					<Image src="/logo-text.svg" width={150} height={60} alt="logo" />
 				</a>
 			</header>
 			<section className="h-screen flex flex-col justify-center items-center pt-[70px]">
