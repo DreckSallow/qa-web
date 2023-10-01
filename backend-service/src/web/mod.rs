@@ -10,8 +10,8 @@ use axum::{
 };
 use futures::{SinkExt, StreamExt};
 use serde::{Deserialize, Serialize};
-use serde_json::json;
-use std::{collections::HashMap, sync::Arc};
+use serde_json::{json, Value};
+use std::sync::Arc;
 use tokio::sync::mpsc;
 
 use crate::app_state::{AppState, AppStateT};
@@ -19,7 +19,7 @@ use crate::app_state::{AppState, AppStateT};
 pub fn router() -> Router {
     Router::new()
         .route("/", get(index_route))
-        .route("/threads", get(threads_count))
+        // .route("/threads", get(threads_count))
         .route("/thread/:thread_id", get(thread_route))
         .with_state(Arc::new(AppState::new()))
 }
@@ -27,32 +27,25 @@ async fn index_route() -> Html<&'static str> {
     Html("<h1>Hello World</h1>")
 }
 
-async fn threads_count(State(state): State<AppStateT>) -> impl IntoResponse {
-    let mut data = HashMap::new();
-    for (k, v) in state.threads.read().await.iter() {
-        data.insert(k.clone(), v.len());
-    }
-    Json(data)
-}
+// async fn threads_count(State(state): State<AppStateT>) -> impl IntoResponse {
+//     Json(state.discussions.get_info().await)
+// }
 
 async fn thread_route(
     ws: WebSocketUpgrade,
     Path(thread_id): Path<String>,
     State(app_state): State<AppStateT>,
 ) -> impl IntoResponse {
-    tracing::debug!("Threads request: {}", thread_id);
-    //TODO: check the discussion table for
-    //security role: "public" | "only registers" | "nobody"
+    //TODO: Add role security for discussions table
     let supabase_res = app_state
-        .client
+        .client()
         .from("discussions")
         .eq("id", &thread_id)
         .select("id")
         .execute()
         .await;
-
     match supabase_res {
-        Err(_e) => return (StatusCode::INTERNAL_SERVER_ERROR).into_response(),
+        Err(_e) => (StatusCode::INTERNAL_SERVER_ERROR).into_response(),
         Ok(res) => {
             if res.status() != 200 {
                 return (res.status(), "Error getting the discussion").into_response();
@@ -83,33 +76,70 @@ async fn handle_socket(ws: WebSocket, state: AppStateT, thread_id: String) {
         sender.close().await.unwrap();
     });
     let index_client = NEXT_USERID.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-    {
-        //Add the new user to thread_id users
-        let mut threads = state.threads.write().await;
-        if let Some(v) = threads.get_mut(&thread_id) {
-            v.insert(index_client, tx);
-        } else {
-            let mut new_hash = HashMap::new();
-            new_hash.insert(index_client, tx);
-            threads.insert(thread_id.clone(), new_hash);
-        };
-    }
+    state
+        .discussions
+        .add_client(&thread_id, index_client, tx)
+        .await;
     // Listen user messages
     while let Some(Ok(msg)) = receiver.next().await {
         if let Message::Text(msg_text) = msg {
-            //TODO: Update the database and send the new message
             let client_message: WebMessage = match serde_json::from_str(&msg_text) {
-                Err(e) => {
-                    tracing::debug!("ERROR PARSING: {:?}", e);
+                Err(_e) => {
+                    state
+                        .discussions
+                        .send_on_by_id(
+                            &thread_id,
+                            &index_client,
+                            json!({
+                                "type":"Error",
+                                "payload":"Bad message structure request."
+                            })
+                            .to_string(),
+                        )
+                        .await;
                     continue;
                 }
                 Ok(r) => r,
             };
-
-            let query_client = state.client.from("comments").select("message,id,likes");
+            let query_client = state.client().from("comments").select("message,id,likes");
 
             let (supabase_res, type_tag) = match client_message {
                 WebMessage::Create { message } => {
+                    let total_res = state
+                        .client()
+                        .from("comments")
+                        .select("likes")
+                        .eq("discussion_id", thread_id.clone())
+                        .limit(20)
+                        .execute()
+                        .await;
+                    match total_res {
+                        Err(_e) => {
+                            continue;
+                        }
+                        Ok(r) => {
+                            let is_maximum =
+                                serde_json::from_str::<Vec<Value>>(&r.text().await.unwrap())
+                                    .map(|v| v.len() >= 7)
+                                    .unwrap_or(true);
+                            if is_maximum {
+                                state
+                                    .discussions
+                                    .send_on_by_id(
+                                        &thread_id,
+                                        &index_client,
+                                        json!({
+                                            "type":"Error",
+                                            "payload":"Comment limit reached"
+                                        })
+                                        .to_string(),
+                                    )
+                                    .await;
+                                continue;
+                            }
+                        }
+                    }
+
                     let json = json!([{
                         "message":message,
                         "discussion_id":thread_id,
@@ -119,6 +149,22 @@ async fn handle_socket(ws: WebSocket, state: AppStateT, thread_id: String) {
                     (query_client.insert(json).execute().await, "Create")
                 }
                 WebMessage::Update { likes, id } => {
+                    //Check the maximun of comment likes
+                    if likes > 30 {
+                        state
+                            .discussions
+                            .send_on_by_id(
+                                &thread_id,
+                                &index_client,
+                                json!({
+                                    "type":"Error",
+                                    "payload":"A comment cannot have more than 30 likes."
+                                })
+                                .to_string(),
+                            )
+                            .await;
+                        continue;
+                    }
                     let json = json!([{"likes":likes}]).to_string();
                     (
                         query_client.eq("id", id).update(json).execute().await,
@@ -131,34 +177,31 @@ async fn handle_socket(ws: WebSocket, state: AppStateT, thread_id: String) {
             };
             match supabase_res {
                 Err(e) => {
-                    tracing::debug!("ERROR SUPABASE: {}", e);
+                    tracing::debug!("Error supabase request: {}", e);
                 }
                 Ok(res) => {
                     let st = res.status().as_u16();
-                    if st >= 200 && st <= 299 {
+                    if (200..299).contains(&st) {
                         if let Ok(cmm_str) = res.text().await {
-                            if let Some(threads) = state.threads.read().await.get(&thread_id) {
-                                for (_cid, thread) in threads {
-                                    if let Err(e) = thread.send(
-                                        json!({
-                                            "type":type_tag,
-                                            "payload":cmm_str.to_string()
-                                        })
-                                        .to_string(),
-                                    ) {
-                                        tracing::info!("ERROR SENDING MESSAGE: {:?}", e);
-                                    };
-                                }
-                            }
+                            state
+                                .discussions
+                                .send_all_by_id(
+                                    &thread_id,
+                                    &json!({
+                                        "type":type_tag,
+                                        "payload":cmm_str.to_string()
+                                    })
+                                    .to_string(),
+                                )
+                                .await;
                         }
                     }
                 }
             }
         }
     }
-
-    let mut threads = state.threads.write().await;
-    if let Some(v) = threads.get_mut(&thread_id) {
-        v.remove(&index_client);
-    }
+    state
+        .discussions
+        .remove_client(&thread_id, &index_client)
+        .await
 }
