@@ -10,7 +10,7 @@ interface Data {
 }
 
 interface RequestInfo {
-	error: PostgrestError | null;
+	error: PostgrestError | null | { message: string };
 	isLoading: boolean;
 }
 
@@ -26,6 +26,12 @@ export const useGetDiscussionState = (disId: DiscussionInfo["id"]) => {
 		getDiscussions(supabase, disId).then(({ data, error }) => {
 			if (error) {
 				return setRequest((s) => ({ ...s, error }));
+			}
+			if (data.length == 0) {
+				return setRequest({
+					error: { message: "Discussion not found" },
+					isLoading: false,
+				});
 			}
 			const first = data[0];
 			const ids = getCommentsLikes(disId);

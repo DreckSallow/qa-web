@@ -38,7 +38,12 @@ export const DiscussionsList = ({
 
 	useEffect(() => {
 		if (!data) return;
-		const socket = new WebSocket(`ws://localhost:3001/thread/${discussion_id}`);
+		const url = process.env["NEXT_PUBLIC_API_URL"]?.replace("http", "w");
+		if (!url) {
+			toast.error("Error conecting.");
+			return;
+		}
+		const socket = new WebSocket(`${url}/thread/${discussion_id}`);
 		socket.addEventListener("message", function (m) {
 			const parsed = JSON.parse(m.data);
 			if (parsed.type === "Error") {
@@ -80,7 +85,7 @@ export const DiscussionsList = ({
 
 	const handleCreateComment = (ev: FormEvent<HTMLFormElement>) => {
 		ev.preventDefault();
-		if ((data?.comments.length || 0) >= MAX_MESSAGES) {
+		if (isExceededLimit) {
 			return toast.error(
 				"The discussion exceeded the limit of allowed messages.",
 			);
@@ -124,6 +129,11 @@ export const DiscussionsList = ({
 			{request.isLoading && (
 				<p className="mt-6 text-slate-600 text-xl font-medium">Loading...</p>
 			)}
+			{request.error && (
+				<p className="mt-6 text-slate-600 text-xl font-medium">
+					Discussion not found :(
+				</p>
+			)}{" "}
 			{!request.isLoading && data && (
 				<>
 					<Header
