@@ -1,5 +1,5 @@
 "use client";
-import { motion, useIsPresent } from "framer-motion";
+import { motion, useIsPresent, MotionStyle } from "framer-motion";
 import { XIcon, ThumbUpIcon } from "@heroicons/react/outline";
 import { CommentInfo } from "@/interfaces";
 
@@ -19,7 +19,9 @@ export const CardComment = ({
 	const isPresent = useIsPresent();
 	const animations = {
 		style: {
-			position: isPresent ? "relative" : "absolute",
+			position: (isPresent
+				? "relative"
+				: "absolute") as MotionStyle["position"],
 		},
 		initial: { scale: 0, opacity: 0 },
 		animate: { scale: 1, opacity: 1 },

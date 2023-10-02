@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Card, Title, DonutChart, Metric } from "@tremor/react";
 import { type PostgrestError } from "@supabase/supabase-js";
+import { Card, Title, DonutChart, Metric, Color } from "@tremor/react";
 import { useSupabase } from "../context";
 
 interface InfoList {
@@ -165,7 +165,7 @@ const CardInfo = ({ title, content, className }: CardProps) => {
 	);
 };
 
-function getRandomColors(n: number): string[] {
+function getRandomColors(n: number): Color[] {
 	const colors = [
 		"slate",
 		"zinc",
@@ -188,13 +188,13 @@ function getRandomColors(n: number): string[] {
 		"rose",
 	];
 
-	const returnColors: string[] = [];
+	const returnColors: Color[] = [];
 
 	while (returnColors.length <= n) {
 		const index = Math.floor(Math.random() * colors.length);
 		const selected = colors.at(index);
 		if (selected && returnColors.at(returnColors.length - 1) != selected) {
-			returnColors.push(selected);
+			returnColors.push(selected as Color);
 		}
 	}
 
