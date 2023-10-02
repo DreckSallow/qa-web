@@ -22,6 +22,8 @@ interface CommentsInfo extends WithAnalitycs {
 	total: number;
 }
 
+const MAX_DISCUSIONS = 3;
+
 export default function OverviewPage() {
 	const { session, supabase } = useSupabase();
 	const [requestState, setRequestState] = useState<{
@@ -47,7 +49,7 @@ export default function OverviewPage() {
 				}
 				const discussionData: DiscussionInfo = {
 					total: data.length,
-					missing: 5 - data.length,
+					missing: MAX_DISCUSIONS - data.length,
 					analytics: data.map(({ comments, title }) => ({
 						name: title,
 						value: comments.length,

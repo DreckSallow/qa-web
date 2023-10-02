@@ -7,6 +7,7 @@ import { useSyncForm, useModal, InputFieldsStr } from "@/hooks";
 import { ModalDialog } from "@/app/components/modals";
 import { PencilIcon, XIcon } from "@heroicons/react/outline";
 import { RequestState } from "@/interfaces";
+import { toast } from "sonner";
 
 interface Discussion {
 	id: string;
@@ -57,6 +58,9 @@ export default function DiscussionsPage() {
 
 	const handleCreation = (values: InputFieldsStr) => {
 		if (formStatus === "create") {
+			if (discussions.length >= 3) {
+				return toast.error("You exceeded the allowed discussion limit.");
+			}
 			supabase
 				.from("discussions")
 				.insert({
