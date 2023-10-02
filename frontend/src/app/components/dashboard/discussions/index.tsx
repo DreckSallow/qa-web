@@ -38,7 +38,7 @@ export const DiscussionsList = ({
 
 	useEffect(() => {
 		if (!data) return;
-		const url = process.env["NEXT_PUBLIC_API_URL"]?.replace("http", "w");
+		const url = process.env["NEXT_PUBLIC_API_URL"]?.replace("http", "ws");
 		if (!url) {
 			toast.error("Error conecting.");
 			return;
