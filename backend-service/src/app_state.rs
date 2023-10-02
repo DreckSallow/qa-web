@@ -75,13 +75,9 @@ pub struct AppState {
     pub discussions: DiscussionsManager,
 }
 impl AppState {
-    pub fn new() -> Self {
-        dotenv::dotenv().ok();
+    pub fn new(sup_url: &str, sup_key: &str) -> Self {
         Self {
-            client: Postgrest::new(dotenv::var("NEXT_PUBLIC_SUPABASE_URL").unwrap()).insert_header(
-                "apikey",
-                dotenv::var("NEXT_PUBLIC_SUPABASE_ANON_KEY").unwrap(),
-            ),
+            client: Postgrest::new(sup_url).insert_header("apikey", sup_key),
             discussions: DiscussionsManager::new(),
         }
     }

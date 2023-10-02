@@ -6,7 +6,7 @@ use axum::{
     http::StatusCode,
     response::{Html, IntoResponse},
     routing::get,
-    Json, Router,
+    Router,
 };
 use futures::{SinkExt, StreamExt};
 use serde::{Deserialize, Serialize};
@@ -14,14 +14,20 @@ use serde_json::{json, Value};
 use std::sync::Arc;
 use tokio::sync::mpsc;
 
-use crate::app_state::{AppState, AppStateT};
+use crate::{
+    app_state::{AppState, AppStateT},
+    Config,
+};
 
-pub fn router() -> Router {
+pub fn router(config: Config) -> Router {
     Router::new()
         .route("/", get(index_route))
         // .route("/threads", get(threads_count))
         .route("/thread/:thread_id", get(thread_route))
-        .with_state(Arc::new(AppState::new()))
+        .with_state(Arc::new(AppState::new(
+            &config.supabase_url,
+            &config.supabase_key,
+        )))
 }
 async fn index_route() -> Html<&'static str> {
     Html("<h1>Hello World</h1>")
