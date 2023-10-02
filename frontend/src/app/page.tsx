@@ -21,7 +21,7 @@ export default function Landing() {
 							Start now
 						</a>
 						<a
-							href="/discussions/id"
+							href="/discussions/5ccfc45a-3dad-42dc-8a2e-970658fab034"
 							className="border-2 border-solid border-purple-500 text-black font-semibold rounded-md py-3 px-7"
 						>
 							See a Demo
