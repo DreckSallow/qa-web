@@ -157,6 +157,7 @@ dependencies = [
  "shuttle-runtime",
  "shuttle-secrets",
  "tokio",
+ "tower-http",
  "tracing",
 ]
 

@@ -13,13 +13,14 @@ use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::sync::Arc;
 use tokio::sync::mpsc;
+use tower_http::cors::CorsLayer;
 
 use crate::{
     app_state::{AppState, AppStateT},
     Config,
 };
 
-pub fn router(config: Config) -> Router {
+pub fn router(config: Config, cors: CorsLayer) -> Router {
     Router::new()
         .route("/", get(index_route))
         // .route("/threads", get(threads_count))
@@ -28,6 +29,7 @@ pub fn router(config: Config) -> Router {
             &config.supabase_url,
             &config.supabase_key,
         )))
+        .layer(cors)
 }
 async fn index_route() -> Html<&'static str> {
     Html("<h1>Hello World</h1>")
@@ -126,7 +128,7 @@ async fn handle_socket(ws: WebSocket, state: AppStateT, thread_id: String) {
                         Ok(r) => {
                             let is_maximum =
                                 serde_json::from_str::<Vec<Value>>(&r.text().await.unwrap())
-                                    .map(|v| v.len() >= 7)
+                                    .map(|v| v.len() >= 20)
                                     .unwrap_or(true);
                             if is_maximum {
                                 state
