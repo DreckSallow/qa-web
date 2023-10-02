@@ -14,7 +14,7 @@ export function GoogleAuthButton(props: GoogleAuthProps) {
 		await supabase.auth.signInWithOAuth({
 			provider: "google",
 			options: {
-				redirectTo: "http://localhost:3000/auth/callback",
+				redirectTo: "/auth/callback",
 			},
 		});
 	};
@@ -22,16 +22,15 @@ export function GoogleAuthButton(props: GoogleAuthProps) {
 		<button
 			onClick={handleGoogleAuth}
 			type="button"
-			className={`text-white focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center mr-2 mb-2 justify-center ${
-				props.btnClass ?? ""
-			}`}
+			className={`text-white focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center mr-2 mb-2 justify-center ${props.btnClass ?? ""
+				}`}
 		>
 			<GoogleIcon className="w-4 h-4 mr-2" />
 			{props.label
 				? props.label
 				: props.type === "sign in"
-				? "Sign in with Google"
-				: "Register with Google"}
+					? "Sign in with Google"
+					: "Register with Google"}
 		</button>
 	);
 }

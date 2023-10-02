@@ -40,7 +40,7 @@ export const RegisterForm = () => {
 			email: values["email"] as string,
 			password: values["password"] as string,
 			options: {
-				emailRedirectTo: "http://localhost:3000/auth/callback",
+				emailRedirectTo: "/auth/callback",
 				data: {
 					full_name: values["username"],
 				},
